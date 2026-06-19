@@ -1,4 +1,4 @@
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4a3tfPbJ45KGPeJP1ICVRDdUz_oK9LHS1HeUoIiwbwjILGm9DGww7IjQDuYSPUF_p/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzYJ9v6sHQkTYgSxU57OqS5IE3OQlolzndSDhKqazX7qHqaYwkzcWVa8diAoTC1mb8/exec';
 const SHEET_BASE_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRv8oYJkDkFIsXwM5ZTn_xPhH8XAD02VVl_9XVFzu2ySNOqnGVMOOH_WiXk5w0nYMU74jc1pxLQkwCD/pub?output=csv';
 const CAT_CSV_URL = SHEET_BASE_URL + '&gid=1305593331';
 
@@ -14,7 +14,15 @@ function init() {
     setupPullToRefresh();
 }
 
-// --- Admin Lock Logic ---
+// --- Admin Lock Logic (เวอร์ชันเข้ารหัสความปลอดภัยสูง) ---
+async function hashPassword(string) {
+    const utf8 = new TextEncoder().encode(string);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// --- Admin Lock Logic (เวอร์ชันส่งไปเช็คหลังบ้าน ปลอดภัยสูงและโค้ดสั้นมาก) ---
 async function askAdminPassword() {
     const { value: password } = await Swal.fire({
         title: 'กรุณาใส่รหัสผ่านแอดมิน',
@@ -23,15 +31,33 @@ async function askAdminPassword() {
         showCancelButton: true
     });
 
-    if (password === '19091512') {
-        isAdmin = true;
-        document.getElementById('adminBtn').classList.remove('hidden');
-        document.getElementById('logoutBtn').classList.remove('hidden');
-        document.getElementById('unlockBtn').classList.add('hidden');
-        Swal.fire({ icon: 'success', title: 'ปลดล็อกเรียบร้อย', timer: 1000, showConfirmButton: false });
-        renderCatalogs(); // Re-render to show edit buttons
-    } else if (password) {
-        Swal.fire({ icon: 'error', title: 'รหัสผ่านผิด' });
+    if (!password) return;
+
+    // แสดงสถานะกำลังตรวจสอบ
+    Swal.fire({ title: 'กำลังตรวจสอบรหัสผ่าน...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+    try {
+        // ส่งรหัสผ่านไปถาม Google Apps Script หลังบ้าน
+        const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({ action: 'checkAdminPassword', password: password.trim() })
+        });
+        
+        const result = await response.json();
+
+        if (result.success === true) {
+            isAdmin = true;
+            document.getElementById('adminBtn').classList.remove('hidden');
+            document.getElementById('logoutBtn').classList.remove('hidden');
+            document.getElementById('unlockBtn').classList.add('hidden');
+            Swal.fire({ icon: 'success', title: 'ปลดล็อกเรียบร้อย', timer: 1000, showConfirmButton: false });
+            renderCatalogs(); // แสดงปุ่มแก้ไข/ลบสินค้า
+        } else {
+            Swal.fire({ icon: 'error', title: 'รหัสผ่านไม่ถูกต้อง!' });
+        }
+    } catch (error) {
+        // หาก Apps Script ของคุณเปิดโหมด no-cors ไว้ ให้ใช้การจำลองปลดล็อก หรือแจ้งเตือนตามระบบ
+        Swal.fire({ icon: 'error', title: 'เกิดข้อผิดพลาดในการเชื่อมต่อ', text: 'โปรดตรวจสอบสิทธิ์การเข้าถึงหลังบ้าน' });
     }
 }
 
