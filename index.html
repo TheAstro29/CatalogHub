@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Catalog Hub by C2TECH</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="pb-20">
+    <div id="ptr" class="text-green-600 font-bold text-xs">⬇️ ลากลงเพื่อรีเฟรช</div>
+
+    <div id="imageOverlay" onclick="this.style.display='none'">
+        <img id="overlayImg" src="" alt="Preview">
+        <div class="absolute bottom-10 text-white text-[10px] bg-black/50 px-4 py-2 rounded-full font-light">
+            แตะที่ว่างเพื่อปิด</div>
+    </div>
+
+    <header class="bg-white/90 backdrop-blur-md border-b sticky top-0 z-30 shadow-sm">
+        <div class="max-w-md mx-auto p-3">
+            <div class="flex justify-between items-center mb-2">
+                <h1 class="text-md font-bold text-green-700 tracking-tight">CATALOG HUB <span
+                        class="font-light text-gray-400 text-[9px]">by C2TECH</span></h1>
+                <div class="flex gap-1">
+                    <button id="adminBtn" onclick="openAdminModal()" title="จัดการระบบ"
+                        class="hidden bg-green-700 hover:bg-green-800 text-white font-bold text-sm p-2 rounded-full shadow-sm transition leading-none">⚙️</button>
+                    <button id="logoutBtn" onclick="handleLogout()" title="ออกจากระบบ"
+                        class="hidden bg-red-600 hover:bg-red-700 text-white font-bold text-sm p-2 rounded-full shadow-sm transition leading-none">🚪</button>
+                    <button id="unlockBtn" onclick="askAdminPassword()" title="เข้าสู่ระบบแอดมิน"
+                        class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold text-sm p-2 rounded-full shadow-sm border transition leading-none">🔓</button>
+                </div>
+            </div>
+            <input type="text" id="searchInput" oninput="filterProductsDebounced()" placeholder="ค้นหาชื่อรุ่น..."
+                class="w-full bg-gray-50 p-2.5 rounded-xl outline-none border border-gray-100 text-sm focus:ring-1 focus:ring-green-500">
+        </div>
+        <nav id="catTabs" class="flex overflow-x-auto no-scrollbar gap-1.5 px-3 pb-2 max-w-md mx-auto"></nav>
+    </header>
+
+    <main class="p-3 max-w-md mx-auto grid grid-cols-1 gap-4" id="catalogList">
+        <div class="text-center py-20 text-gray-400 animate-pulse text-xs">กำลังเชื่อมต่อข้อมูล...</div>
+    </main>
+
+    <div id="adminModal"
+        class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-2 backdrop-blur-sm">
+        <div class="modal-content bg-white shadow-2xl">
+            <div class="flex justify-between items-center mb-3 border-b pb-2">
+                <h2 id="modalTitle" class="text-sm font-bold text-gray-700 uppercase">🚀 จัดการระบบ</h2>
+                <button onclick="closeModal()" class="text-gray-400 text-xl font-light">&times;</button>
+            </div>
+
+            <div class="bg-blue-50/50 p-2.5 rounded-xl mb-4 border border-blue-100">
+                <span class="label-mini text-blue-500">เพิ่ม/ลบหมวดหมู่</span>
+                <div class="flex items-center gap-1.5 mt-1">
+                    <input type="text" id="newCatInput" placeholder="ชื่อหมวด..."
+                        class="flex-1 text-xs p-2 rounded-lg border border-blue-100 outline-none">
+                    <div class="flex gap-1">
+                        <button onclick="handleAddCat()"
+                            class="w-8 h-8 flex items-center justify-center bg-white border border-blue-200 rounded-lg shadow-sm">➕</button>
+                        <button onclick="handleDelCat()"
+                            class="w-8 h-8 flex items-center justify-center bg-white border border-red-100 rounded-lg shadow-sm">🗑️</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-2.5">
+                <input type="hidden" id="editOldTitle">
+                <div>
+                    <label class="label-mini">ชื่อรุ่นสินค้า</label>
+                    <input type="text" id="inputTitle" placeholder="..."
+                        class="w-full p-2.5 rounded-xl bg-gray-50 border border-gray-100 outline-none text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="label-mini">หมวดหมู่</label>
+                        <select id="inputCat"
+                            class="w-full p-2.5 rounded-xl bg-gray-50 border border-gray-100 outline-none text-sm"></select>
+                    </div>
+                    <div>
+                        <label class="label-mini">ประเภทไฟล์</label>
+                        <div
+                            class="p-2.5 text-[11px] text-gray-400 bg-gray-50 rounded-xl border border-gray-100 text-center uppercase font-bold">
+                            PDF / Drive</div>
+                    </div>
+                </div>
+                <div>
+                    <label class="label-mini">ลิงก์ Google Drive</label>
+                    <input type="text" id="inputLink" placeholder="..."
+                        class="w-full p-2.5 rounded-xl bg-gray-50 border border-gray-100 outline-none text-[10px]">
+                </div>
+                <div class="pt-2 border-t mt-3">
+                    <button id="mainActionBtn" onclick="handleProductAction()"
+                        class="w-full bg-green-600 text-white py-3 rounded-xl font-bold text-sm shadow-md active:scale-95 transition">บันทึกข้อมูลสินค้า</button>
+                    <button onclick="resetToAddMode()" id="resetBtn"
+                        class="hidden w-full py-1.5 text-blue-500 text-[10px] font-bold text-center mt-1">ยกเลิกแก้ไข /
+                        เพิ่มใหม่</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="qrOverlay" onclick="this.style.display='none'"
+        class="hidden fixed inset-0 bg-black/80 z-50 flex flex-col items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white p-6 rounded-3xl text-center max-w-sm w-full shadow-2xl animate-fade-in"
+            onclick="event.stopPropagation()">
+            <h3 id="qrTitle" class="font-bold text-gray-800 text-lg mb-2 line-clamp-1">ชื่อสินค้า</h3>
+            <p class="text-xs text-gray-500 mb-4">🎥 สแกน QR Code เพื่อเปิดลิงก์บนมือถือของคุณ</p>
+
+            <div class="bg-gray-50 p-4 rounded-2xl flex items-center justify-center border border-gray-100">
+                <img id="qrImg" src="" alt="QR Code" class="w-64 h-64 max-w-full">
+            </div>
+
+            <button onclick="document.getElementById('qrOverlay').style.display='none'"
+                class="mt-5 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-3 rounded-xl font-bold text-sm transition">
+                ปิดหน้าต่าง
+            </button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,200 @@
+body {
+    font-family: 'Kanit', sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior-y: contain;
+    font-size: 16px; /* ปรับขนาดฟอนต์เริ่มต้นบนมือถือให้ใหญ่ขึ้นอ่านง่าย */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- ส่วนของรูปภาพสินค้า --- */
+.product-image {
+    object-fit: contain;
+    width: 100%;
+    height: 200px; /* เพิ่มความสูงเริ่มต้นบนมือถือ */
+    background-color: #fff;
+    padding: 8px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: zoom-in;
+}
+
+.cat-btn.active {
+    background-color: #15803d !important;
+    color: white !important;
+    border-color: #15803d !important;
+}
+
+/* --- ส่วนของ Modal แอดมิน --- */
+.modal-content {
+    width: 94%;
+    max-width: 420px; /* ขยายขนาดกล่องแอดมินเล็กน้อย */
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+}
+
+input,
+select {
+    font-size: 16px !important; /* ปรับฟอนต์ Input ให้อ่านง่ายขึ้น */
+}
+
+.label-mini {
+    font-size: 12px; /* ขยายจาก 10px */
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: block;
+}
+
+/* --- ส่วนของ Image Overlay --- */
+#imageOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+}
+
+#imageOverlay img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 14px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.spin-icon {
+    animation: spin 1s linear infinite;
+}
+
+/* Pull to Refresh Style */
+#ptr {
+    position: fixed;
+    top: -50px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    z-index: 40;
+    font-size: 14px;
+}
+
+
+/* ==========================================================================
+   --- Responsive & TV Layout Customization (ปรับขนาดฟอนต์และโครงสร้าง) ---
+   ========================================================================== */
+
+/* 📱 [Mobile Large & Tablet] หน้าจอความกว้างตั้งแต่ 768px ขึ้นไป */
+@media (min-width: 768px) {
+    header .max-w-md,
+    main.max-w-md {
+        max-width: 1000px !important;
+    }
+    
+    /* ขยายฟอนต์ส่วนหัวและช่องค้นหา */
+    header h1 { font-size: 1.75rem !important; }
+    #searchInput { font-size: 16px !important; py: 3.5; }
+    .cat-btn { font-size: 13px !important; padding: 6px 18px !important; }
+
+    #catalogList {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 1.5rem;
+    }
+    
+    /* ขยายขนาดการ์ดสินค้า */
+    .product-image { height: 240px; }
+    #catalogList h3 { font-size: 14px !important; } /* ขยายชื่อสินค้า */
+    #catalogList button { font-size: 12px !important; py: 3px; } /* ขยายปุ่มกดการ์ด */
+}
+
+/* 💻 [PC / Laptop Screen] หน้าจอความกว้างตั้งแต่ 1024px ขึ้นไป */
+@media (min-width: 1024px) {
+    #catalogList {
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+    header h1 { font-size: 2rem !important; }
+    .cat-btn { font-size: 14px !important; }
+    #catalogList h3 { font-size: 15px !important; }
+    #catalogList button { font-size: 13px !important; }
+}
+
+/* 📺 [Smart TV 50-60 นิ้ว] หน้าจอความกว้างตั้งแต่ 1400px ขึ้นไป */
+@media (min-width: 1400px) {
+    header .max-w-md,
+    main.max-w-md {
+        max-width: 1350px !important;
+    }
+    #catalogList {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        gap: 1.75rem;
+    }
+    
+    /* ขยายสเกลฟอนต์สำหรับระยะนั่งชม TV */
+    header h1 { font-size: 2.5rem !important; }
+    #searchInput { font-size: 18px !important; }
+    .cat-btn { font-size: 16px !important; padding: 8px 22px !important; }
+    
+    .product-image { height: 260px; }
+    #catalogList h3 { font-size: 18px !important; line-height: 1.4 !important; }
+    #catalogList button { font-size: 14px !important; py: 3.5px; }
+    
+    /* ปรับขนาดบาร์ด้านบนของ Admin ให้ใหญ่สมดุล */
+    header button[id*="Btn"] { font-size: 18px !important; padding: 10px !important; }
+    
+    /* ขยายขนาดหน้าต่าง QR Code Pop-up สำหรับรุ่นจอทีวีกลาง */
+    #qrOverlay .max-w-sm { max-w-md !important; padding: 2rem !important; }
+    #qrTitle { font-size: 1.5rem !important; }
+    #qrOverlay p { font-size: 14px !important; }
+    #qrImg { width: 320px !important; height: 320px !important; }
+}
+
+/* 🎯 📺 [Mega Smart TV 80 นิ้ว / จอ 4K ขนาดใหญ่พิเศษ] ความกว้างตั้งแต่ 1800px ขึ้นไป */
+@media (min-width: 1800px) {
+    header .max-w-md,
+    main.max-w-md {
+        max-width: 1750px !important;
+    }
+    #catalogList {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important; /* ล็อกไว้ที่ 5 คอลัมน์บนจอ 80 นิ้วเพื่อให้การ์ดสินค้าใหญ่เต็มตาสแกนง่าย */
+        gap: 2rem;
+    }
+    
+    /* 🔥 จัดหนักขนาดฟอนต์เพื่อให้ยืนห่างจากจอ 80 นิ้วแล้วยังอ่านได้ชัดเจน */
+    header h1 { font-size: 3.5rem !important; margin-bottom: 12px; }
+    #searchInput { font-size: 22px !important; padding: 18px 24px !important; border-radius: 20px; }
+    .cat-btn { font-size: 20px !important; padding: 12px 30px !important; border-radius: 9999px; }
+    
+    /* การ์ดสินค้าและปุ่มขนาดใหญ่พิเศษ */
+    .product-image { height: 320px; padding: 12px; }
+    #catalogList h3 { font-size: 24px !important; line-height: 1.5 !important; margin-top: 14px !important; }
+    #catalogList button { font-size: 18px !important; py: 16px !important; border-radius: 12px !important; }
+    
+    /* ปุ่มไอคอนแอดมินมุมขวาบนเพิ่มความใหญ่ */
+    header button[id*="Btn"] { font-size: 24px !important; padding: 14px !important; }
+    header .flex.gap-1 { gap: 12px !important; }
+
+    /* 📱 หน้าต่างแสดงผล QR Code ขนาดใหญ่ยักษ์สำหรับจอ 80 นิ้ว (ลูกค้าไม่ต้องเดินมาติดจอ ยกมือถือสแกนผ่านได้เลย) */
+    #qrOverlay .max-w-sm { max-w-xl !important; padding: 3rem !important; border-radius: 2.5rem !important; }
+    #qrTitle { font-size: 2.2rem !important; margin-bottom: 12px !important; }
+    #qrOverlay p { font-size: 18px !important; margin-bottom: 24px !important; }
+    #qrOverlay .bg-gray-50 { padding: 24px !important; border-radius: 2rem !important; }
+    #qrImg { width: 420px !important; height: 420px !important; } /* QR code ขยายเต็มตาคมชัดมาก */
+    #qrOverlay button { font-size: 18px !important; py: 16px !important; border-radius: 16px !important; margin-top: 24px !important; }
+}
