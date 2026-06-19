@@ -316,5 +316,27 @@ function handleLogout() {
         }
     });
 }
+
+/**
+ * ฟังก์ชันสร้างและแสดงผล QR Code สำหรับตัวเว็บไซต์ทั้งหมด
+ */
+function showWebQR() {
+    // ดึง URL ปัจจุบันของเว็บไซต์ที่กำลังเปิดใช้งานอยู่โดยอัตโนมัติ
+    const currentWebUrl = window.location.href;
+    
+    const qrOverlay = document.getElementById('qrOverlay');
+    const qrImg = document.getElementById('qrImg');
+    const qrTitle = document.getElementById('qrTitle');
+    
+    // ตั้งหัวข้อ Pop-up
+    qrTitle.innerText = "QR Code สำหรับเข้าเว็บไซต์";
+    qrImg.src = 'https://via.placeholder.com/300x300?text=Loading...';
+    
+    // สร้างลิงก์ QR Code ส่งไปยัง API
+    const encodedUrl = encodeURIComponent(currentWebUrl);
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodedUrl}`;
+    
+    qrOverlay.style.display = 'flex';
+}
 // รันระบบเริ่มต้น
 init();

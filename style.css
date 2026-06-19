@@ -353,4 +353,11 @@ select {
         border-radius: 16px !important;
         margin-top: 24px !important;
     }
+
+    /* ปรับขนาดปุ่ม QR เว็บรวมให้ใหญ่ชัดเจนบนจอทีวี 80 นิ้ว */
+    #webQrBtn {
+        font-size: 18px !important;
+        padding: 14px 20px !important;
+        border-radius: 16px !important;
+    }
 }

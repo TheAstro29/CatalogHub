@@ -26,13 +26,13 @@
             <div class="flex justify-between items-center mb-2">
                 <h1 class="text-md font-bold text-green-700 tracking-tight">CATALOG HUB <span
                         class="font-light text-gray-400 text-[9px]">by C2TECH</span></h1>
-                <div class="flex gap-1">
-                    <button id="adminBtn" onclick="openAdminModal()" title="จัดการระบบ"
-                        class="hidden bg-green-700 hover:bg-green-800 text-white font-bold text-sm p-2 rounded-full shadow-sm transition leading-none">⚙️</button>
-                    <button id="logoutBtn" onclick="handleLogout()" title="ออกจากระบบ"
-                        class="hidden bg-red-600 hover:bg-red-700 text-white font-bold text-sm p-2 rounded-full shadow-sm transition leading-none">🚪</button>
-                    <button id="unlockBtn" onclick="askAdminPassword()" title="เข้าสู่ระบบแอดมิน"
-                        class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold text-sm p-2 rounded-full shadow-sm border transition leading-none">🔓</button>
+                <div class="flex gap-1 items-center">
+                    <button id="webQrBtn" onclick="showWebQR()" class="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl border border-blue-200 active:scale-95 transition flex items-center justify-center gap-1 font-semibold text-xs">
+                        🌐 QR เว็บ
+                    </button>
+                    <button id="adminBtn" onclick="openAdminModal()" class="hidden p-2 bg-green-700 hover:bg-green-800 text-white rounded-xl shadow active:scale-95 transition">🚀 จัดการ</button>
+                    <button id="logoutBtn" onclick="handleLogout()" class="hidden p-2 bg-red-600 hover:bg-red-700 text-white rounded-xl shadow active:scale-95 transition">🔒 ออก</button>
+                    <button id="unlockBtn" onclick="askAdminPassword()" class="p-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl border active:scale-95 transition">🔓</button>
                 </div>
             </div>
             <input type="text" id="searchInput" oninput="filterProductsDebounced()" placeholder="ค้นหาชื่อรุ่น..."
